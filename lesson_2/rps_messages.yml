@@ -1,0 +1,17 @@
+welcome: "Welcome to Rock-Paper-Scissors-Lizzard-Spock!"
+choose: "Please choose one:"
+choose_abrv: "Or enter 'r' for rock, 'p' for paper, 'sc' for scissors, 'l' for lizzard, or 'sp' for spock."
+invalid_choice: "That's not a valid choice. Please try again."
+selections: "You chose: %{players_choice}; Computer chose: %{computer_choice}."
+play_again: "Do you want to play again? (Y / N)"
+goodbye: "Thanks for playing! Goodbye!"
+win: "Congrats! You win!"
+lose: "Sorry! You lost!"
+tie: "It's a tie!"
+score_update: >
+  The score is now: 
+  Player: %{player_score} 
+  Computer: %{computer_score}
+you_win: "You are the GRAND WINNER!"
+computer_wins: "The computer is the GRAND WINNER!"
+

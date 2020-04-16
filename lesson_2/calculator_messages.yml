@@ -11,10 +11,10 @@ en:
   valid_operater: "Must choose 1, 2, 3 or 4"
   operator_prompt: >
     What operation would you like to preform?
-    => 1) add
-    => 2) subtract
-    => 3) multiply
-    => 4) divide
+      1) add
+      2) subtract
+      3) multiply
+      4) divide
   add: "Adding the two numbers..."
   subtract: "Subtracting the two numbers..."
   multiply: "Multiplying the two numbers..."
