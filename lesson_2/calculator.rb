@@ -24,15 +24,15 @@ def valid_number?(number)
 end
 
 def valid_integer?(number)
-  /^\d+$/.match(number)
+  /^[+-]\d+$/.match(number)
 end
 
 def valid_float?(number)
-  /\d/.match(number) && /^\d*\.?\d*$/.match(number)
+  /\d/.match(number) && /^[+-]\d*\.?\d*$/.match(number)
 end
 
 def invalid_name?(name)
-  name.match?(/^\d+$/) || name.start_with?(" ") || name.empty?
+  name.match?(/^[+-]\d+$/) || name.start_with?(" ") || name.empty?
 end
 
 def div_by_zero(number, language)
@@ -143,8 +143,8 @@ loop do
   end
 
   prompt(messages('preform_again', language))
-  answer = gets.chomp
-  break unless answer.downcase.start_with?('y')
+  answer = gets.chomp.downcase
+  break unless ['y', 'yes'].include?(answer)
 end
 
 prompt(messages('goodbye', language))
