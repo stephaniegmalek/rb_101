@@ -23,6 +23,7 @@ en:
   divide_by_zero_error: "You cannot divide by 0!"
   result: "The result is %{result}"
   preform_again: "Do you want to perform another calculation? (Y / N)"
+  invalid_answer: "Invalid response. Please enter 'y', 'yes', 'n', or 'no."
   goodbye: "Thank you for usng the calculator! Goodbye!"
 es:
   welcome: "Bienvenido a la calculadora!"
@@ -46,5 +47,6 @@ es:
   divide_by_zero_error: "¡No puedes dividir por 0!"
   result: "El resultado es %{result}"
   preform_again: "¿Quieres realizar otro cálculo? (Y / N)"
+  invalid_answer: "Respuesta invalida. Ingrese 'y', 'yes', 'n' o 'no."
   goodbye: "¡Gracias por usar la calculadora! ¡Adiós!"
 

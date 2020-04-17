@@ -9,14 +9,15 @@ end
 
 def prompt(message)
   puts("=> #{message}")
+  puts ""
 end
 
-def select_language
-  prompt(messages('select_lang'))
-  lang = gets.chomp
-  language = 'es' if lang == '2'
-  language = 'en' if lang == '1'
-  language
+def valid_lang?(lang)
+  lang == '2' || lang == '1'
+end
+
+def define_language(lang)
+  lang == '2' ? 'es' : 'en'
 end
 
 def valid_number?(number)
@@ -24,15 +25,24 @@ def valid_number?(number)
 end
 
 def valid_integer?(number)
-  /^[+-]\d+$/.match(number)
+  /^[+-]\d+$/.match(number) || /^\d+$/.match(number)
 end
 
 def valid_float?(number)
-  /\d/.match(number) && /^[+-]\d*\.?\d*$/.match(number)
+  /\d/.match(number) &&
+    (/^[+-]\d*\.?\d*$/.match(number) ||
+    /^\d*\.?\d*$/.match(number))
 end
 
 def invalid_name?(name)
-  name.match?(/^[+-]\d+$/) || name.start_with?(" ") || name.empty?
+  name.match?(/^[+-]\d+$/) ||
+    name.match?(/^\d+$/) ||
+    name.start_with?(" ") ||
+    name.empty?
+end
+
+def answer_valid?(answer)
+  answer == 'y' || answer == 'yes' || answer == 'n' || answer == 'no'
 end
 
 def div_by_zero(number, language)
@@ -44,6 +54,18 @@ def div_by_zero(number, language)
   end
 end
 
+def select_language(lang='1')
+  loop do
+    prompt(messages('select_lang'))
+    lang = gets.chomp
+    if valid_lang?(lang)
+      return define_language(lang)
+    else
+      prompt(messages('lang_error'))
+    end
+  end
+end
+
 def ask_for_name(language)
   loop do
     prompt(messages('ask_name', language))
@@ -52,7 +74,6 @@ def ask_for_name(language)
       return name.capitalize!
     else
       prompt(messages('invalid_name', language))
-      puts ""
     end
   end
 end
@@ -65,7 +86,6 @@ def ask_for_number(which_num)
       return number
     else
       prompt('invalid_number')
-      puts ""
     end
   end
 end
@@ -110,31 +130,37 @@ def result(operator, number1, number2)
   result
 end
 
+def ask_preform_again(language)
+  loop do
+    prompt(messages('preform_again', language))
+    answer = gets.chomp.downcase
+    if answer_valid?(answer)
+      return answer
+    else
+      prompt(messages('invalid_answer', language))
+    end
+  end
+end
+
 # start
 system('clear') || system('cls')
 
 language = select_language
 
 prompt(messages('welcome', language))
-puts ""
 
 name = ask_for_name(language)
 puts format(messages('hi', language), name: name)
-puts ""
 
 # main loop
 loop do
   number1 = ask_for_number(messages('first_number', language))
-  puts ""
   number2 = ask_for_number(messages('second_number', language))
-  puts ""
 
   operator = ask_for_operator(language)
-  puts ""
 
   operation_message = operation_to_message(operator, language)
   prompt(operation_message)
-  puts ""
 
   result = result(operator, number1, number2)
 
@@ -142,11 +168,8 @@ loop do
     puts format(messages('result', language), result: result)
   end
 
-  prompt(messages('preform_again', language))
-  answer = gets.chomp.downcase
+  answer = ask_preform_again(language)
   break unless ['y', 'yes'].include?(answer)
 end
 
 prompt(messages('goodbye', language))
-
-# num input validation to accept negative numbers
