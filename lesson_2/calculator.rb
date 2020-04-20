@@ -170,6 +170,7 @@ loop do
 
   answer = ask_preform_again(language)
   break unless ['y', 'yes'].include?(answer)
+  system('clear') || system('cls')
 end
 
 prompt(messages('goodbye', language))

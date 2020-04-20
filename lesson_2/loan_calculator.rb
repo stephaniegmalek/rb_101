@@ -1,29 +1,22 @@
-MESSAGES = {
-  welcome: "Welcome to the Mortgage Calculator!
-   -----------------------------------",
-  loan_amt: "Please enter your loan amount. Note don't include the $ sign",
-  loan_amt_error: "Invalid loan amount. Please try again.",
-  annual_rate: "Please enter your annual percentage rate (APR).",
-  annual_rate_ex: "(For example, please input 5% as 5, not 0.05)",
-  annual_rate_error: "Invalid APR. Please try again.",
-  loan_duration: "Please enter your loan duration in years:",
-  loan_duration_error: "Invalid loan duration. Please try again.",
-  confirmation: "It looks like your loan amount is ${loan_amt},
-   your annual percentage rate is {annual_rate}%,
-   and your loan duration is {loan_duration} years.
-   Press 'Y' to confirm.",
-  monthly_payment: "Your monthly payment is: ${monthly}",
-  preform_another: "Would you like to preform another calculation?",
-  thanks: "Thank you for using the Mortgage Calculator!
-   Goodbye!"
-}
+require 'yaml'
+MESSAGES = YAML.load_file('loan_calculator_messages.yml')
 
-def prompt(message)
-  puts("=> #{message}")
+def messages(message)
+  MESSAGES[message]
 end
 
-def valid_number?(number)
+def prompt(message)
+  puts "=> #{message}"
+  puts ""
+end
+
+def valid_positive_number?(number)
   number.to_f.positive? && (valid_integer?(number) || valid_float?(number))
+end
+
+def number?(obj)
+  obj = obj.to_s unless obj.is_a? String
+  /\A[+-]?\d+(\.[\d]+)?\z/.match obj
 end
 
 def valid_integer?(number)
@@ -32,6 +25,14 @@ end
 
 def valid_float?(number)
   number =~ /^\d+[.]\d+$|^\d+[.]{1}$|^[.]\d+$/
+end
+
+def valid_apr?(apr)
+  number?(apr) && apr.to_f >= 0.00 && apr.to_f <= 100
+end
+
+def answer_valid?(answer)
+  answer == 'y' || answer == 'yes' || answer == 'n' || answer == 'no'
 end
 
 # properly formats the dollar amounts with commas and 2 decimal places
@@ -43,49 +44,55 @@ def format_dollar_amts(num_as_string)
 end
 
 def ask_for_loan_amt
-  prompt(MESSAGES[:loan_amt])
+  prompt(messages('loan_amt'))
   loop do
     loan_amt = gets.chomp
-    if valid_number?(loan_amt)
+    if valid_positive_number?(loan_amt)
       return loan_amt.to_f
     else
-      puts ""
-      prompt(MESSAGES[:loan_amt_error])
+      prompt(messages('loan_amt_error'))
     end
   end
 end
 
 def ask_for_apr
-  prompt(MESSAGES[:annual_rate])
-  prompt(MESSAGES[:annual_rate_ex])
+  prompt(messages('annual_rate'))
+  prompt(messages('annual_rate_ex'))
   loop do
     annual_rate = gets.chomp
-    if valid_number?(annual_rate) && annual_rate.to_i > 0
+    if valid_apr?(annual_rate)
       return annual_rate.to_f
     else
-      prompt(MESSAGES[:annual_rate_error])
+      prompt(messages('annual_rate_error'))
     end
   end
 end
 
 def ask_for_loan_duration
-  prompt(MESSAGES[:loan_duration])
+  prompt(messages('loan_duration'))
   loop do
     years = gets.chomp
-    if valid_number?(years)
+    if valid_integer?(years) && years.to_i > 0
       return years.to_f
     else
-      prompt(MESSAGES[:loan_duration_error])
+      prompt(messages('loan_duration_error'))
     end
   end
 end
 
 def confirm_input(loan_amt, annual_rate, years)
-  puts prompt(MESSAGES[:confirmation]
-    .sub('{loan_amt}', format_dollar_amts(loan_amt.to_s))\
-    .sub('{annual_rate}', annual_rate.to_s)\
-    .sub('{loan_duration}', years.to_s))
-  gets.chomp
+  loop do
+    prompt format(messages('confirmation'),
+                  loan_amt: format_dollar_amts(loan_amt.to_s),
+                  annual_rate: "#{annual_rate}%",
+                  loan_duration: years)
+    confirm = gets.chomp
+    if answer_valid?(confirm)
+      return confirm
+    else
+      prompt(messages('invalid_answer'))
+    end
+  end
 end
 
 def calculate_monthly_payment(loan_amt, annual_rate, years)
@@ -97,11 +104,22 @@ def calculate_monthly_payment(loan_amt, annual_rate, years)
   monthly_payment.round(2)
 end
 
+def ask_preform_again
+  loop do
+    prompt(messages('preform_another'))
+    answer = gets.chomp.downcase
+    if answer_valid?(answer)
+      return answer
+    else
+      prompt(messages('invalid_answer'))
+    end
+  end
+end
+
 system('clear') || system('cls')
 
 # start of program
-prompt(MESSAGES[:welcome])
-puts ""
+prompt(messages('welcome'))
 
 loan_amt = 0
 annual_rate = 0
@@ -110,26 +128,25 @@ years = 0
 loop do
   loop do
     loan_amt = ask_for_loan_amt
-    puts ""
     annual_rate = ask_for_apr
-    puts ""
     years = ask_for_loan_duration
-    puts ""
 
     confirmation = confirm_input(loan_amt, annual_rate, years)
     break if confirmation.downcase.start_with?('y')
   end
 
   monthly = calculate_monthly_payment(loan_amt, annual_rate, years)
-  prompt(MESSAGES[:monthly_payment]
-    .sub('{monthly}', format_dollar_amts(monthly.to_s)))
-  puts ""
 
-  prompt(MESSAGES[:preform_another])
-  puts ""
-  answer = gets.chomp
-  break unless answer.downcase.start_with?('y')
+  if monthly.nan?
+    prompt format(messages('monthly_payment'), monthly: "$0.00")
+  else
+    prompt format(messages('monthly_payment'),
+                  monthly: format_dollar_amts(monthly.to_s))
+  end
+
+  answer = ask_preform_again
+  break unless ['y', 'yes'].include?(answer)
   system('clear') || system('cls')
 end
 
-prompt(MESSAGES[:thanks])
+prompt(messages('thanks'))
