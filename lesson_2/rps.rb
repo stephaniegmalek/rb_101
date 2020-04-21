@@ -9,6 +9,8 @@ VALID_CHOICES = {
   'sp' => { name: 'spock', beats: ['scissors', 'rock'] }
 }
 
+VALID_ANSWERS = %w(y yes n no)
+
 def messages(message)
   MESSAGES[message]
 end
@@ -22,11 +24,11 @@ def display_choices
 end
 
 def valid_choice?(choice)
-  true if VALID_CHOICES.include?(choice)
+  VALID_CHOICES.include?(choice)
 end
 
 def answer_valid?(answer)
-  answer == 'y' || answer == 'yes' || answer == 'n' || answer == 'no'
+  VALID_ANSWERS.include?(answer)
 end
 
 def retrieve_players_choice
