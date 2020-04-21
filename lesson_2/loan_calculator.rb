@@ -1,6 +1,7 @@
 require 'yaml'
 MESSAGES = YAML.load_file('loan_calculator_messages.yml')
 
+VALID_ANSWERS = %w(y yes n no)
 def messages(message)
   MESSAGES[message]
 end
@@ -32,7 +33,7 @@ def valid_apr?(apr)
 end
 
 def answer_valid?(answer)
-  answer == 'y' || answer == 'yes' || answer == 'n' || answer == 'no'
+  VALID_ANSWERS.include?(answer)
 end
 
 # properly formats the dollar amounts with commas and 2 decimal places
@@ -43,40 +44,28 @@ def format_dollar_amts(num_as_string)
   formated_amt
 end
 
-def ask_for_loan_amt
-  prompt(messages('loan_amt'))
+def ask_for_input(input_type)
+  prompt(messages(input_type))
+  input = nil
   loop do
-    loan_amt = gets.chomp
-    if valid_positive_number?(loan_amt)
-      return loan_amt.to_f
-    else
-      prompt(messages('loan_amt_error'))
-    end
+    input = gets.chomp
+    break if valid_input?(input, input_type)
+    prompt(messages("#{input_type}_error"))
   end
+  return input if input_type == "preform_another"
+  input.to_f
 end
 
-def ask_for_apr
-  prompt(messages('annual_rate'))
-  prompt(messages('annual_rate_ex'))
-  loop do
-    annual_rate = gets.chomp
-    if valid_apr?(annual_rate)
-      return annual_rate.to_f
-    else
-      prompt(messages('annual_rate_error'))
-    end
-  end
-end
-
-def ask_for_loan_duration
-  prompt(messages('loan_duration'))
-  loop do
-    years = gets.chomp
-    if valid_integer?(years) && years.to_i > 0
-      return years.to_f
-    else
-      prompt(messages('loan_duration_error'))
-    end
+def valid_input?(input, input_type)
+  case input_type
+  when "loan_amt"
+    valid_positive_number?(input)
+  when "annual_rate"
+    valid_apr?(input)
+  when "loan_duration"
+    valid_integer?(input) && input.to_i > 0
+  when "preform_another"
+    answer_valid?(input.downcase)
   end
 end
 
@@ -86,7 +75,7 @@ def confirm_input(loan_amt, annual_rate, years)
                   loan_amt: format_dollar_amts(loan_amt.to_s),
                   annual_rate: "#{annual_rate}%",
                   loan_duration: years)
-    confirm = gets.chomp
+    confirm = gets.chomp.downcase
     if answer_valid?(confirm)
       return confirm
     else
@@ -98,22 +87,16 @@ end
 def calculate_monthly_payment(loan_amt, annual_rate, years)
   monthly_interest_rate = annual_rate / 12 / 100
   months = years.to_i * 12
-  monthly_payment = loan_amt *
+  monthly_payment = loan_amt.to_f *
                     (monthly_interest_rate /
                     (1 - (1 + monthly_interest_rate)**(-months)))
   monthly_payment.round(2)
 end
 
-def ask_preform_again
-  loop do
-    prompt(messages('preform_another'))
-    answer = gets.chomp.downcase
-    if answer_valid?(answer)
-      return answer
-    else
-      prompt(messages('invalid_answer'))
-    end
-  end
+def calculate_zero_apr_monthly_payment(loan_amt, years)
+  months = years.to_i * 12
+  monthly_payment = loan_amt / months
+  monthly_payment.round(2)
 end
 
 system('clear') || system('cls')
@@ -127,9 +110,9 @@ years = 0
 
 loop do
   loop do
-    loan_amt = ask_for_loan_amt
-    annual_rate = ask_for_apr
-    years = ask_for_loan_duration
+    loan_amt = ask_for_input('loan_amt')
+    annual_rate = ask_for_input('annual_rate')
+    years = ask_for_input('loan_duration')
 
     confirmation = confirm_input(loan_amt, annual_rate, years)
     break if confirmation.downcase.start_with?('y')
@@ -138,14 +121,15 @@ loop do
   monthly = calculate_monthly_payment(loan_amt, annual_rate, years)
 
   if monthly.nan?
-    prompt format(messages('monthly_payment'), monthly: "$0.00")
+    monthly = calculate_zero_apr_monthly_payment(loan_amt, years)
+    prompt format(messages('monthly_payment'), monthly: format_dollar_amts(monthly.to_s))
   else
     prompt format(messages('monthly_payment'),
                   monthly: format_dollar_amts(monthly.to_s))
   end
 
-  answer = ask_preform_again
-  break unless ['y', 'yes'].include?(answer)
+  answer = ask_for_input('preform_another')
+  break unless ['y', 'yes'].include?(answer.downcase)
   system('clear') || system('cls')
 end
 

@@ -1,8 +1,9 @@
 welcome: "Welcome to the Mortgage Calculator!"
 loan_amt: "Please enter your loan amount. Note don't include the $ sign"
 loan_amt_error: "Invalid loan amount. Please try again."
-annual_rate: "Please enter your annual percentage rate (APR)."
-annual_rate_ex: "(For example, please input 5% as 5, not 0.05)"
+annual_rate: >
+ Please enter your annual percentage rate (APR).
+ (For example, please input 5% as 5, not 0.05)
 annual_rate_error: "Invalid APR. Please try again."
 loan_duration: "Please enter your loan duration in years:"
 loan_duration_error: "Invalid loan duration - only positive whole numbers accepted. Please try again."
@@ -13,5 +14,6 @@ confirmation: >
  Press 'Y' to confirm.
 monthly_payment: "Your monthly payment is: $ %{monthly}"
 preform_another: "Would you like to preform another calculation?"
+preform_another_error: "Invalid response. Please enter 'y', 'yes', 'n', or 'no'."
 invalid_answer: "Invalid response. Please enter 'y', 'yes', 'n', or 'no."
 thanks: "Thank you for using the Mortgage Calculator! Goodbye!"

@@ -25,6 +25,10 @@ def valid_choice?(choice)
   true if VALID_CHOICES.include?(choice)
 end
 
+def answer_valid?(answer)
+  answer == 'y' || answer == 'yes' || answer == 'n' || answer == 'no'
+end
+
 def retrieve_players_choice
   loop do
     prompt(messages('choose'))
@@ -93,6 +97,18 @@ def diplay_winner(score)
   end
 end
 
+def ask_play_again
+  loop do
+    prompt(messages('play_again'))
+    answer = gets.chomp.downcase
+    if answer_valid?(answer)
+      return answer
+    else
+      prompt(messages('invalid_answer'))
+    end
+  end
+end
+
 # start of game
 system('clear') || system('cls')
 prompt(messages('welcome'))
@@ -117,12 +133,9 @@ loop do
     break
   end
 
-  prompt(messages('play_again'))
-  answer = gets.chomp.downcase
+  answer = ask_play_again
   break unless ['y', 'yes'].include?(answer)
   system('clear') || system('cls')
 end
 
 prompt(messages('goodbye'))
-
-# validate play again input

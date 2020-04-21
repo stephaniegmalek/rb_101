@@ -4,6 +4,7 @@ choose_abrv: "Or enter 'r' for rock, 'p' for paper, 'sc' for scissors, 'l' for l
 invalid_choice: "That's not a valid choice. Please try again."
 selections: "You chose: %{players_choice}; Computer chose: %{computer_choice}."
 play_again: "Do you want to play again? (Y / N)"
+invalid_answer: "Invalid response. Please enter 'y', 'yes', 'n', or 'no."
 goodbye: "Thanks for playing! Goodbye!"
 win: "Congrats! You win!"
 lose: "Sorry! You lost!"
