@@ -118,15 +118,14 @@ loop do
     break if confirmation.downcase.start_with?('y')
   end
 
-  monthly = calculate_monthly_payment(loan_amt, annual_rate, years)
+  monthly = if annual_rate == 0.0
+              calculate_zero_apr_monthly_payment(loan_amt, years)
+            else
+              calculate_monthly_payment(loan_amt, annual_rate, years)
+            end
 
-  if monthly.nan?
-    monthly = calculate_zero_apr_monthly_payment(loan_amt, years)
-    prompt format(messages('monthly_payment'), monthly: format_dollar_amts(monthly.to_s))
-  else
-    prompt format(messages('monthly_payment'),
-                  monthly: format_dollar_amts(monthly.to_s))
-  end
+  prompt format(messages('monthly_payment'),
+                monthly: format_dollar_amts(monthly.to_s))
 
   answer = ask_for_input('preform_another')
   break unless ['y', 'yes'].include?(answer.downcase)
