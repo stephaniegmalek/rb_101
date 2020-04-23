@@ -36,7 +36,7 @@ def retrieve_players_choice
     prompt(messages('choose'))
     display_choices
 
-    choice = gets.chomp
+    choice = gets.chomp.downcase
 
     if valid_choice?(choice)
       return choice
@@ -66,20 +66,29 @@ def display_selections(choice, computer_choice)
                 computer_choice: selection_to_display(computer_choice))
 end
 
-def display_results(player, computer)
-  if win?(player, computer)
+def determine_winner(player, computer)
+  winner = if win?(player, computer)
+            "player"
+           elsif win?(computer, player)
+            "computer"
+           end
+  winner
+end
+
+def display_results(winner)
+  if winner == "player"
     prompt(messages('win'))
-  elsif win?(computer, player)
+  elsif winner == "computer"
     prompt(messages('lose'))
   else
     prompt(messages('tie'))
   end
 end
 
-def update_and_display_score(choice, computer_choice, score)
-  if win?(choice, computer_choice)
+def update_and_display_score(winner, score)
+  if winner == "player"
     score[:player] += 1
-  elsif win?(computer_choice, choice)
+  elsif winner == "computer"
     score[:computer] += 1
   end
   prompt format(messages('score_update'),
@@ -127,8 +136,9 @@ loop do
   computer_choice = retrieve_computers_choice
 
   display_selections(choice, computer_choice)
-  display_results(choice, computer_choice)
-  update_and_display_score(choice, computer_choice, score)
+  winner = determine_winner(choice, computer_choice)
+  display_results(winner)
+  update_and_display_score(winner, score)
 
   if grand_winner?(score)
     diplay_winner(score)
