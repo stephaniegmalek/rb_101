@@ -276,6 +276,17 @@ customer_orders = [
     ]
   },
 ]
+
+[
+  {:customer_name=>"Emma Lopez", 
+  :customer_id=>12, 
+  :orders=>[
+    {:order_fulfilled=>false, :order_value=>58.0}
+    ]}, 
+{:customer_name=>"Michael Richards", 
+:customer_id=>32, :
+orders=>[{:order_fulfilled=>false, :order_value=>85.65}]}] 
+
 all_orders =[
   {customer_id: 12, customer_name: 'Emma Lopez', total_order_value: 483.48},
   {customer_id: 32, customer_name: 'Michael Richards', total_order_value: 205.65},
@@ -300,13 +311,7 @@ fulfilled_orders =[
   {:customer_id=>12, :customer_name=>"Emma Lopez", :total_order_value=>483.48}, 
   {:customer_id=>32, :customer_name=>"Michael Richards", :total_order_value=>205.65}
 ]
-customer_orders.each_with_index do |data, index|
-  order_value = data[:orders].reduce(0) do |total, order|
-    total + order[:order_value]
-  end
 
-  all_orders[index][:total_order_value] = order_value
-end
 
 fulfilled_orders = customer_orders.map do |customer|
   {
@@ -317,13 +322,10 @@ end
 
 customer_orders.each_with_index do |data, index|
   order_value = data[:orders].reduce(0) do |total, order|
-    if order[:order_fulfilled] == true
-      total + order[:order_value]
-    else
-      1
-    end
+    #if order[:order_fulfilled]
+      total + order[:order_value] if true
     # p order_value
   end
   p order_value
-  # fulfilled_orders[index][:order_value] = order_value
+  fulfilled_orders[index][:order_value] = order_value
 end

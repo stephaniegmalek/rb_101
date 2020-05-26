@@ -1,0 +1,17 @@
+welcome: "Welcome to Tic Tac Toe!"
+rules: >
+  The first player to mark three squares in a row wins the game. 
+     First player to win 5 games wins the match!
+invalid_choice: "Whoops - invalid choice! Please try again."
+another_match?: >
+  Would you like to begin a new match? 
+     (Enter Y/Yes to play again. Enter N/No to exit the program.)
+goodbye: 'Thanks for playing Tic Tac Toe! Goodbye!'
+continue?: >
+  Would you like to continue the match and play another game? 
+     (Enter Y/Yes to continue playing. Enter N/No to give up.)
+player_grand_winner: "Congrats! YOU are the Grand Winner!"
+computer_grand_winner: "Computer is the Grand Winner! Better luck next time."
+quit_early: "Giving up so soon?"
+tie: "It's a tie!"
+who_go_first?: "Please choose who goes first: Enter 'P' for Player or 'C' for Computer."
